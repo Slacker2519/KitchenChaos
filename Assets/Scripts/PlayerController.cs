@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build.Content;
 using UnityEditor.Rendering;
 using UnityEngine;
 
@@ -39,19 +40,24 @@ public class PlayerController : MonoBehaviour, IKitchenObjectParent
     private void Start()
     {
         _gameInput.OnInteractAction += GameInput_OnInteractAction;
-        _gameInput.OnInteractAlternateAction += _gameInput_OnInteractAlternateAction;
+        _gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
 
-    private void _gameInput_OnInteractAlternateAction(object sender, EventArgs e)
+    private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
-        if (_selectedCounter != null)
+        if(KitchenGameManager.Instance.IsGamePlaying())
         {
-            _selectedCounter.InteractAlternate(this);
+            if (_selectedCounter != null)
+            {
+                _selectedCounter.InteractAlternate(this);
+            }
         }
     }
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e)
     {
+        if (!KitchenGameManager.Instance.IsGamePlaying()) return;
+
         if (_selectedCounter != null)
         {
             _selectedCounter.Interact(this);
